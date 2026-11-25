@@ -140,7 +140,7 @@ export const EaSignalPanel: React.FC<EaSignalPanelProps> = ({
     config.strategyFocus === 'ULTRA_SCALP';
   const strategyLabel =
     config.strategyFocus === 'ADAPTIVE_SCALP'
-      ? 'Adaptive M5+M1 (WR >80%)'
+      ? 'Adaptive M5+M1 (AI Decide)'
       : config.strategyFocus === 'ULTRA_SCALP'
       ? 'Ultra-Scalp M1+M5'
       : config.strategyFocus === 'SCALPING_EMA'

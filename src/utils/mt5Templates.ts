@@ -169,7 +169,7 @@ enum ENUM_STRATEGY_FOCUS
    STRAT_ULTRA_SCALP = 1,      // Ultra-Scalping M1 + M5 (Sniper Micro Breakout)
    STRAT_LIQUIDITY_SMC = 2,    // Smart Money Concepts (Liquidity Sweep & BOS)
    STRAT_BALANCED = 3,         // Balanced Confluence (EMA + RSI + MACD + Price Action)
-   STRAT_ADAPTIVE_SCALP = 4    // Auto Adaptive AI: Momentum M5 + Sniper M1+M5 (Winrate >80%)
+   STRAT_ADAPTIVE_SCALP = 4    // Auto Adaptive AI: Momentum M5 vs Micro Breakout M1+M5 (AI Decide)
 };
 
 input group "=== 1. Koneksi Web Terminal & Mode Copy Trade ==="

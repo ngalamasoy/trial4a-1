@@ -806,7 +806,7 @@ async function generateAnalysisViaOpenRouterDecisions(opts: {
           instructions:
             'Should the trader open a BUY (LONG) XAU/USD position right now based on S/R structure, price action, and order flow?',
           criteria: {
-            true: 'Bullish structure, strong Support bounce/rejection, or valid upside breakout with sufficient room before nearest Resistance and >80% scalp winrate quality.',
+            true: 'Bullish structure, strong Support bounce/rejection, or valid upside breakout with sufficient room before nearest Resistance and strong AI conviction to win.',
             false: 'Bearish, choppy, ranging, or blocked by nearby resistance.',
           },
         },
@@ -815,7 +815,7 @@ async function generateAnalysisViaOpenRouterDecisions(opts: {
           instructions:
             'Should the trader open a SELL (SHORT) XAU/USD position right now based on S/R structure, price action, and order flow?',
           criteria: {
-            true: 'Bearish structure, strong Resistance rejection, or valid downside breakdown with sufficient room before nearest Support and >80% scalp winrate quality.',
+            true: 'Bearish structure, strong Resistance rejection, or valid downside breakdown with sufficient room before nearest Support and strong AI conviction to win.',
             false: 'Bullish, choppy, ranging, or blocked by nearby support.',
           },
         },
@@ -3443,7 +3443,7 @@ async function startServer() {
 
       const strategyInstructionMap: Record<string, string> = {
         ADAPTIVE_SCALP:
-          'MODE GABUNGAN AUTO ADAPTIVE (TARGET WINRATE >80% & PROFITABLE): EA/AI wajib memilih sendiri secara dinamis apakah kondisi pasar saat ini paling cocok memakai (A) Scalping Momentum M5 (EMA 9/21/50 searah + Tight ATR saat tren bersih & ADX mendukung) ATAU (B) Ultra-Scalping M1+M5 Sniper Breakout (saat breakout kompresi / sweep likuiditas + konfirmasi micro candle & penolakan S/R). WAJIB selektif ala sniper: hanya eksekusi BUY/SELL bila peluang win estimasi >80% (di atas 80%) dan jalur ke TP1 bebas dari tembok S/R penghalang; jika struktur choppy/meragukan/≤80%, wajib pilih HOLD demi menjaga winrate tinggi dan profitabilitas. Sebutkan mode yang dipilih ([Momentum M5] atau [Sniper M1+M5]) pada setupPattern & judgeVerdict.',
+          'MODE GABUNGAN AUTO ADAPTIVE (100% KEPUTUSAN MANDIRI AI): AI bebas memutuskan sendiri secara otonom apakah kondisi pasar saat ini paling cocok memakai (A) Scalping Momentum M5 (EMA 9/21/50 + Tight ATR saat tren bersih) ATAU (B) Ultra-Scalping Micro Breakout M1+M5 (saat breakout kompresi / sweep likuiditas + konfirmasi micro candle & penolakan S/R). Tidak ada syarat angka winrate tertentu—selama AI YAKIN berdasarkan pertimbangan struktur pasar, momentum, dan jalur ke TP1 akan WIN, AI boleh langsung eksekusi BUY/SELL; jika AI ragu atau pasar choppy/berisiko, pilih HOLD. Sebutkan mode yang dipilih ([Momentum M5] atau [Micro Breakout M1+M5]) pada setupPattern & judgeVerdict.',
         BALANCED:
           'Preferensi Horizon: Intraday/Swing seimbang. AI bebas menentukan sendiri arah BUY, SELL, atau HOLD berdasarkan pembacaan pasar mandiri; indikator hanya penunjang opsional.',
         SCALPING_EMA:
@@ -3728,7 +3728,7 @@ ATURAN MEMBACA PETA HARGA & S/R:
 
       const adaptivePromptRule =
         strategyFocus === 'ADAPTIVE_SCALP'
-          ? `\nATURAN GABUNGAN AUTO ADAPTIVE (TARGET WINRATE >80% & PROFITABLE):\n- Anda menggabungkan 2 engine: (A) [Momentum M5] EMA 9/21/50 + Tight ATR, dan (B) [Sniper M1+M5] Ultra-Scalping Sniper Breakout. Pilih otomatis mode yang paling cocok dengan kondisi pasar saat ini.\n- Gunakan [Momentum M5] saat tren bersih (EMA 9/21/50 searah & slope jelas, ADX mendukung, pullback sehat ke EMA9/21).\n- Gunakan [Sniper M1+M5] saat terjadi breakout kompresi / liquidity sweep dengan konfirmasi micro candle & penolakan S/R kunci.\n- WAJIB disiplin target Winrate >80% (di atas 80%): hanya keluarkan BUY/SELL jika konfluensi solid dan jalur ke TP1 bebas dari tembok S/R penghalang; jika choppy/meragukan atau peluang ≤80%, WAJIB jawab HOLD.\n- Sebutkan pilihan mode ([Momentum M5] atau [Sniper M1+M5]) secara eksplisit di setupPattern dan judgeVerdict.`
+          ? `\nATURAN GABUNGAN AUTO ADAPTIVE (100% KEPUTUSAN MANDIRI AI — TANPA BATAS WINRATE PAKSA):\n- Anda menggabungkan 2 engine: (A) [Momentum M5] EMA 9/21/50 + Tight ATR, dan (B) [Micro Breakout M1+M5] Ultra-Scalping Sniper Breakout. Pilih otomatis mode yang paling cocok dengan kondisi pasar saat ini.\n- Gunakan [Momentum M5] saat tren bersih dan momentum searah.\n- Gunakan [Micro Breakout M1+M5] saat terjadi breakout kompresi / liquidity sweep dengan konfirmasi micro candle & penolakan S/R kunci.\n- TIDAK ada syarat angka winrate minimum (>80%/≥90%): putuskan sepenuhnya dengan pertimbangan AI sendiri. Asalkan AI YAKIN setup ini berpeluang kuat untuk WIN dan jalur ke TP1 layak ditembus, keluarkan BUY/SELL; jika AI merasa ragu atau berisiko, jawab HOLD.\n- Sebutkan pilihan mode ([Momentum M5] atau [Micro Breakout M1+M5]) secara eksplisit di setupPattern dan judgeVerdict.`
           : '';
 
       const promptText = `Anda adalah TRADER & HAKIM KEPUTUSAN AI MANDIRI (100% Autonomous AI Sovereign Decision Maker) untuk XAU/USD.${adaptivePromptRule}
@@ -4595,17 +4595,7 @@ TUGAS KEPUTUSAN MANDIRI AI:
       if (calibratedConf >= 90 && (normalizedBias === 'RANGING' || isWeakAdx || normalizedSignal === 'HOLD')) {
         calibratedConf = Math.min(calibratedConf, normalizedSignal === 'HOLD' ? 68 : 74);
       }
-      let adaptiveFilterNote = '';
-      if (
-        strategyFocus === 'ADAPTIVE_SCALP' &&
-        openPositionsCount === 0 &&
-        normalizedSignal !== 'HOLD' &&
-        calibratedConf <= 80
-      ) {
-        normalizedSignal = 'HOLD';
-        adaptiveFilterNote =
-          ' [Adaptive Filter WR >80%: Setup belum memenuhi syarat konfluensi di atas 80% Momentum M5 / Sniper M1+M5, ditahan menjadi HOLD.]';
-      }
+      const adaptiveFilterNote = '';
 
       const lockDir = normalizedSignal === 'SELL' ? -1 : 1;
       const tpDist = Math.abs(takeProfit1 - entryPrice);

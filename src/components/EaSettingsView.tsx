@@ -138,7 +138,7 @@ export const EaSettingsView: React.FC<EaSettingsViewProps> = ({
               className="w-full px-3 py-2 text-xs rounded-md bg-[#0B0E14] border border-white/[0.1] text-[#F8FAFC] focus:outline-none focus:border-[#D4AF37]"
             >
               <option value="ADAPTIVE_SCALP">
-                Auto Adaptive AI: Momentum M5 + Ultra-Scalp Sniper M1+M5 (Target Winrate &gt;80%)
+                Auto Adaptive AI: Momentum M5 vs Micro Breakout M1+M5 (AI Bebas Memutuskan)
               </option>
               <option value="SCALPING_EMA">Scalping Momentum M5 (EMA 9/21/50 + Tight ATR)</option>
               <option value="ULTRA_SCALP">Ultra-Scalping M1 + M5 (Sniper Micro Breakout)</option>
@@ -147,7 +147,7 @@ export const EaSettingsView: React.FC<EaSettingsViewProps> = ({
             </select>
             {config.strategyFocus === 'ADAPTIVE_SCALP' && (
               <p className="text-[11px] text-[#10B981] leading-relaxed">
-                EA otomatis memilih antara Momentum M5 (EMA 9/21/50 + Tight ATR) atau Ultra-Scalping M1+M5 (Sniper Breakout) sesuai kondisi pasar, hanya mengeksekusi setup berprobabilitas win di atas 80% (&gt;80%) dan HOLD jika pasar choppy/berisiko.
+                AI bebas memutuskan sendiri apakah memakai Momentum M5 atau Micro Breakout M1+M5 tanpa batasan angka winrate tertentu—selama AI yakin setup akan WIN berdasarkan analisanya sendiri, eksekusi langsung dijalankan, dan HOLD jika AI ragu.
               </p>
             )}
           </div>
