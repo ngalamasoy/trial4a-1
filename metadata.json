@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix AurumEA — XAUUSD M5 AI Expert Advisor",
+  "description": "Terminal trading AI Expert Advisor untuk pair XAU/USD timeframe 5 menit (M5) dengan analisa chart real-time menggunakan Gemini API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
